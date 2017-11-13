@@ -178,10 +178,6 @@ if($datelist) {
 
 if($failed) { open(FAILED,'>',$failed) or die "Could not open $failed for writing - $! - exiting"; }
 
-# --- Create app work directory if needed ---
-
-unless(-d "$APP_PATH/work") { mkpath("$APP_PATH/work"); }
-
 # --- Set output root path ---
 
 my $outputRoot = "$DATA_OUT/observations/ocean/short_range/global/sst-avhrr/daily-data";
@@ -197,7 +193,8 @@ DAY: foreach my $day (@datelist) {
     my $yyyy       = $day->Year;
     my $yyyymmdd   = int($day);
     my $sourceFile = "ftp://eclipse.ncdc.noaa.gov/pub/OI-daily-v2/NetCDF/$yyyy/AVHRR/avhrr-only-v2.$yyyymmdd.nc.gz";
-    my $destFile   = "$APP_PATH/work/ncei-avhrr-only-v2.nc.gz";
+    my $outputDir  = join('/',$outputRoot,date_dirs($day));
+    my $destFile   = "$outputDir/ncei-avhrr-only-v2.nc.gz";
     if(-s $destFile) { unlink($destFile); }
     my $badresult  = system("wget $sourceFile -O $destFile >& /dev/null");
 
@@ -235,7 +232,7 @@ DAY: foreach my $day (@datelist) {
 
     # --- Check that the unzipped file exists in the archive ---
 
-    my $archiveFile = "$APP_PATH/work/ncei-avhrr-only-v2.nc";
+    my $archiveFile = "$outputDir/ncei-avhrr-only-v2.nc";
 
     unless(-s $archiveFile) {
         warn "   ERROR: Archive file not found - check for uncaught errors - logged";
