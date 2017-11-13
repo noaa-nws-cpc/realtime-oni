@@ -8,9 +8,9 @@ update-sst-archive - Download, unzip, and archive NCEI-based SST data
 
 =head1 SYNOPSIS
 
- $REALTIME_SST/scripts/update-sst-archive.pl [-l|-d]
- $REALTIME_SST/scripts/create_images.pl -h
- $REALTIME_SST/scripts/create_images.pl -man
+ $REALTIME_ONI/scripts/update-sst-archive.pl [-l|-d]
+ $REALTIME_ONI/scripts/create_images.pl -h
+ $REALTIME_ONI/scripts/create_images.pl -man
 
  [OPTION]            [DESCRIPTION]                                    [VALUES]
 
@@ -87,8 +87,8 @@ my $APP_PATH;
 my($DATA_IN,$DATA_OUT);
 
 BEGIN {
-    die "REALTIME_SST must be set to a valid directory - exiting" unless(CheckENV('REALTIME_SST'));
-    $APP_PATH   = $ENV{REALTIME_SST};
+    die "REALTIME_ONI must be set to a valid directory - exiting" unless(CheckENV('REALTIME_ONI'));
+    $APP_PATH   = $ENV{REALTIME_ONI};
     $APP_PATH   = RemoveSlash($APP_PATH);
     die "DATA_IN must be set to a valid directory - exiting" unless(CheckENV('DATA_IN'));
     $DATA_IN    = $ENV{DATA_IN};
