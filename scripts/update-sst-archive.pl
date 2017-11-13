@@ -200,9 +200,22 @@ DAY: foreach my $day (@datelist) {
     my $badresult  = system("wget $sourceFile -O $destFile");
 
     if($badresult) {
-        warn "Unable to download $sourceFile - will not update archive for $day - logged";
-        $error = 1;
-        next DAY;
+
+        # --- Attempt to download a preliminary file ---
+
+        $sourceFile = "ftp://eclipse.ncdc.noaa.gov/pub/OI-daily-v2/NetCDF/$yyyy/AVHRR/avhrr-only-v2.$yyyymmdd\_preliminary.nc.gz";
+        $badresult  = system("wget $sourceFile -O $destFile");
+
+        if($badresult) {
+            warn "Unable to download AVHRR SST file - will not update archive for $day - logged";
+            $error = 1;
+            next DAY;
+        }
+        else {
+            warn "WARNING: Downloaded a preliminary AVHRR SST file for $day - logged";
+            $error = 1;
+        }
+
     }
 
     # --- Unzip source file ---
