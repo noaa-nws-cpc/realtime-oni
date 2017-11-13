@@ -222,6 +222,7 @@ DAY: foreach my $day (@datelist) {
         }
 
     }
+    else { print "   Downloaded a final AVHRR SST file for $day\n"; }
 
     # --- Unzip source file ---
 
