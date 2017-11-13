@@ -197,22 +197,25 @@ DAY: foreach my $day (@datelist) {
     my $destFile   = "$outputDir/ncei-avhrr-only-v2.nc.gz";
     if(-s $destFile) { unlink($destFile); }
     my $badresult  = system("wget $sourceFile -O $destFile >& /dev/null");
+    my $sysmsg     = $?;
 
     if($badresult) {
+        warn "   WARNING: Unable to download final AVHRR SST file - $sysmsg - looking for a preliminary version";
 
         # --- Attempt to download a preliminary file ---
 
         $sourceFile = "ftp://eclipse.ncdc.noaa.gov/pub/OI-daily-v2/NetCDF/$yyyy/AVHRR/avhrr-only-v2.$yyyymmdd\_preliminary.nc.gz";
         $badresult  = system("wget $sourceFile -O $destFile >& /dev/null");
+        $sysmsg     = $?;
 
         if($badresult) {
-            warn "   ERROR: Unable to download AVHRR SST file - will not update archive for $day - logged";
+            warn "   ERROR: Unable to download preliminary AVHRR SST file too - $sysmsg - will not update archive for $day - $sysmsg";
             $error = 1;
             if($failed) { print FAILED "$yyyymmdd\n"; }
             next DAY;
         }
         else {
-            warn "   WARNING: Downloaded a preliminary AVHRR SST file for $day - logged";
+            warn "   Downloaded a preliminary AVHRR SST file for $day - archive will need update once final data are available\n";
             if($failed) { print FAILED "$yyyymmdd\n"; }
             $error = 1;
         }
@@ -222,9 +225,10 @@ DAY: foreach my $day (@datelist) {
     # --- Unzip source file ---
 
     $badresult = system("gunzip -f $destFile");
+    $sysmsg    = $?;
 
     if($badresult) {
-        warn "   ERROR: Could not unzip $destFile - logged";
+        warn "   ERROR: Could not unzip $destFile - $sysmsg";
         $error = 1;
         if($failed) { print FAILED "$yyyymmdd\n"; }
         next DAY;
