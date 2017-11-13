@@ -197,22 +197,24 @@ DAY: foreach my $day (@datelist) {
     my $sourceFile = "ftp://eclipse.ncdc.noaa.gov/pub/OI-daily-v2/NetCDF/$yyyy/AVHRR/avhrr-only-v2.$yyyymmdd.nc.gz";
     my $destFile   = "$APP_PATH/work/ncei-avhrr-only-v2.nc.gz";
     if(-s $destFile) { unlink($destFile); }
-    my $badresult  = system("wget $sourceFile -O $destFile");
+    my $badresult  = system("wget $sourceFile -O $destFile >& /dev/null");
 
     if($badresult) {
 
         # --- Attempt to download a preliminary file ---
 
         $sourceFile = "ftp://eclipse.ncdc.noaa.gov/pub/OI-daily-v2/NetCDF/$yyyy/AVHRR/avhrr-only-v2.$yyyymmdd\_preliminary.nc.gz";
-        $badresult  = system("wget $sourceFile -O $destFile");
+        $badresult  = system("wget $sourceFile -O $destFile >& /dev/null");
 
         if($badresult) {
-            warn "Unable to download AVHRR SST file - will not update archive for $day - logged";
+            warn "ERROR: Unable to download AVHRR SST file - will not update archive for $day - logged";
             $error = 1;
+            if($failed) { print FAILED "$yyyymmdd\n"; }
             next DAY;
         }
         else {
             warn "WARNING: Downloaded a preliminary AVHRR SST file for $day - logged";
+            if($failed) { print FAILED "$yyyymmdd\n"; }
             $error = 1;
         }
 
@@ -220,13 +222,33 @@ DAY: foreach my $day (@datelist) {
 
     # --- Unzip source file ---
 
-    # --- Use a GrADS script to create the archive file ---
+    $badresult = system("gunzip -f $destFile");
 
+    if($badresult) {
+        warn "ERROR: Could not unzip $destFile - logged";
+        $error = 1;
+        if($failed) { print FAILED "$yyyymmdd\n"; }
+        next DAY;
+    }
+
+    # --- Check that the unzipped file exists in the archive ---
+
+    my $archiveFile = "$APP_PATH/work/ncei-avhrr-only-v2.nc";
+
+    unless(-s $archiveFile) {
+        warn "ERROR: Archive file not found - check for uncaught errors - logged";
+        $error = 1;
+        if($failed) { print FAILED "$yyyymmdd\n"; }
+        next DAY;
+    }
+
+    print "AVHRR SST data for $day has been archived!\n";
 }  # :DAY
 
 # --- Cleanup and end script ---
 
-if($error) { die "An error has occurred - please check the log file for more information - exiting"; }
+if($failed) { close(FAILED); }
+if($error)  { die "Not all files were archived properly - please check the log file for more information - exiting"; }
 
 sub date_dirs {
     my $day  = shift;
