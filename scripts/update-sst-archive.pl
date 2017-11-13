@@ -140,7 +140,7 @@ if($manual) {
 
 # --- Create list of dates to archive ---
 
-my @datelist;
+my @daylist;
 
 # Add date from -date option if supplied!
 
@@ -148,7 +148,7 @@ if($date) {
     my $day;
     eval   { $day = CPC::Day->new($date); };
     if($@) { die "Option --date=$date is invalid! Reason: $@ - exiting"; }
-    else   { push(@datelist,$day); }
+    else   { push(@daylist,$day); }
 }
 
 # Add dates from file if -list option supplied!
@@ -161,9 +161,9 @@ if($datelist) {
 
         foreach my $row (@datelist) {
             my $day;
-            eval   { $day = CPC::Day->new($date); };
-            if($@) { die "Option --date=$date is invalid! Reason: $@ - exiting"; }
-            else   { push(@datelist,$day); }
+            eval   { $day = CPC::Day->new($row); };
+            if($@) { die "In $datelist, $row is an invalid date! Reason: $@ - exiting"; }
+            else   { push(@daylist,$day); }
         }
 
     }
@@ -185,7 +185,7 @@ print "\nOutput root directory: $outputRoot\n\n";
 
 # --- Update the archive ---
 
-DAY: foreach my $day (@datelist) {
+DAY: foreach my $day (@daylist) {
     print "Archiving AVHRR SST data for $day...\n";
 
     # --- Download source file ---
