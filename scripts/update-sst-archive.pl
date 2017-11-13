@@ -194,6 +194,7 @@ DAY: foreach my $day (@datelist) {
     my $yyyymmdd   = int($day);
     my $sourceFile = "ftp://eclipse.ncdc.noaa.gov/pub/OI-daily-v2/NetCDF/$yyyy/AVHRR/avhrr-only-v2.$yyyymmdd.nc.gz";
     my $outputDir  = join('/',$outputRoot,date_dirs($day));
+    unless(-d $outputDir) { mkpath($outputDir) or die "\nCould not create directory $outputDir - check app permissions on your system - exiting"; }
     my $destFile   = "$outputDir/ncei-avhrr-only-v2.nc.gz";
     if(-s $destFile) { unlink($destFile); }
     my $badresult  = system("wget $sourceFile -O $destFile >& /dev/null");
