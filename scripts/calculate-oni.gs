@@ -40,11 +40,23 @@ say 'output given:    'output
 
 * --- Open dataset ---
 
-* --- Set the Nino 3.4 region boundaries ---
+'xdfopen 'ctlFile
 
-* --- Compute the period regional mean ---
+* --- Compute the Oceanic Nino Index ---
+
+'define oni=ave(aave('var',lon=120,lon=170,lat=-5,lat=5),time='startDate',time='endDate')'
 
 * --- Write the result to the output file ---
+
+'d oni'
+value=sublin(result,2)
+value=subwrd(value,1)
+write(output,value)
+
+*'set gxout fwrite'
+*'set fwrite 'output
+*'d oni'
+*'disable fwrite'
 
 * --- End GrADS script ---
 
