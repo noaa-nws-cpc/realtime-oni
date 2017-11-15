@@ -145,7 +145,7 @@ if($@) { die "Option --dates=$dates is invalid! $endDate is not a valid date. Pl
 
 # --- Set up arguments for the GrADS script ---
 
-my $ctlFile    = "$DATA_OUT/observations/ocean/short_range/global/sst-avhrr/daily-data/avhrr-only-v2.ctl";
+my $ctlFile    = "$DATA_OUT/observations/ocean/short_range/global/sst-avhrr/daily-data/ncei-avhrr-only-v2.ctl";
 my $var        = 'anom';
 my $outputRoot = "$DATA_OUT/observations/ocean/short_range/global/oni-avhrr";
 my $yyyy       = $end->Year;
@@ -174,8 +174,8 @@ else {
     binmode(CHKONI);
     my $chkonistr = join('',<CHKONI>);
     close(CHKONI);
-    my @chkoni    = unpack('f*',$chkonistr);
-    my $chkoni    = pop(@chkoni);
+    my $chkoni    = unpack('f*',$chkonistr);
+    print "   $outputFile written!\n";
     print "   ONI Value Calculated: $chkoni\n";
 }
 
