@@ -44,19 +44,19 @@ say 'output given:    'output
 
 * --- Compute the Oceanic Nino Index ---
 
-'define oni=ave(aave('var',lon=120,lon=170,lat=-5,lat=5),time='startDate',time='endDate')'
+'define oni=ave(aave('var',lon=190,lon=240,lat=-5,lat=5),time='startDate',time='endDate')'
 
 * --- Write the result to the output file ---
 
-'d oni'
-value=sublin(result,2)
-value=subwrd(value,1)
-write(output,value)
-
-*'set gxout fwrite'
-*'set fwrite 'output
 *'d oni'
-*'disable fwrite'
+*value=sublin(result,2)
+*value=subwrd(value,1)
+*write(output,value)
+
+'set gxout fwrite'
+'set fwrite 'output
+'d oni'
+'disable fwrite'
 
 * --- End GrADS script ---
 
