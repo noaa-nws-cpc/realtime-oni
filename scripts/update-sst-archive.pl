@@ -9,8 +9,8 @@ update-sst-archive - Download, unzip, and archive NCEI-based SST data
 =head1 SYNOPSIS
 
  $REALTIME_ONI/scripts/update-sst-archive.pl [-l|-d]
- $REALTIME_ONI/scripts/create_images.pl -h
- $REALTIME_ONI/scripts/create_images.pl -man
+ $REALTIME_ONI/scripts/update-sst-archive.pl -h
+ $REALTIME_ONI/scripts/update-sst-archive.pl -man
 
  [OPTION]            [DESCRIPTION]                                    [VALUES]
 
