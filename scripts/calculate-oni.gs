@@ -1,5 +1,5 @@
 *
-* calculate-oni.gs - Calculate the Oceanic Nino Index from gridded daily SST anomaly data
+* calculate-oni.gs - Calculate the Oceanic Nino Index and equivalent SST from gridded daily SST data
 *
 * Usage:
 *   cd ${REALTIME_ONI}/scripts
@@ -9,7 +9,7 @@
 *   ctlFile    Dataset descriptor filename
 *   startDate  Starting date of the averaging period in ddMONyyyy format
 *   endDate    Ending date of the averaging period in ddMONyyyy format
-*   output     Filename where ONI value will be written
+*   output     Filename where ONI and SST values will be written
 *
 
 function calconi (args)
@@ -39,20 +39,17 @@ say 'output given:    'output
 
 'xdfopen 'ctlFile
 
-* --- Compute the Oceanic Nino Index ---
+* --- Compute the Oceanic Nino Index and equivalent SST ---
 
 'define oni=ave(aave(anom,lon=190,lon=240,lat=-5,lat=5),time='startDate',time='endDate')'
+'define sst=ave(aave(sst,lon=190,lon=240,lat=-5,lat=5),time='startDate',time='endDate')'
 
 * --- Write the result to the output file ---
-
-*'d oni'
-*value=sublin(result,2)
-*value=subwrd(value,1)
-*write(output,value)
 
 'set gxout fwrite'
 'set fwrite 'output
 'd oni'
+'d sst'
 'disable fwrite'
 
 * --- End GrADS script ---

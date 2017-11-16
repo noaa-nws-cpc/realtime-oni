@@ -182,9 +182,10 @@ else {
     binmode(CHKONI);
     my $chkonistr = join('',<CHKONI>);
     close(CHKONI);
-    my $chkoni    = unpack('f*',$chkonistr);
+    my @chkoni    = unpack('f*',$chkonistr);
     print "   $outputFile written!\n";
-    print "   ONI Value Calculated: $chkoni\n";
+    print "   ONI Value Calculated: $chkoni[0]\n";
+    print "   SST Value Calculated: $chkoni[1]\n";
 }
 
 # --- Cleanup and end script ---
