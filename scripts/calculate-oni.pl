@@ -8,7 +8,7 @@ calculate-oni - Calculate the Oceanic Nino Index from daily SST data and write i
 
 =head1 SYNOPSIS
 
- $REALTIME_ONI/scripts/calculate-oni.pl [-d]
+ $REALTIME_ONI/scripts/calculate-oni.pl [-d|-o]
  $REALTIME_ONI/scripts/calculate-oni.pl -h
  $REALTIME_ONI/scripts/calculate-oni.pl -man
 
@@ -17,6 +17,7 @@ calculate-oni - Calculate the Oceanic Nino Index from daily SST data and write i
  -dates, -d          Date range for computing the ONI, e.g., 3-months yyyymmdd-yyyymmdd
  -help, -h           Print usage message and exit
  -manual, -man       Display script documentation
+ -output, -o         Output filename (override default)               filename
 
 =head1 DESCRIPTION
 
@@ -100,14 +101,16 @@ my $error = 0;
 
 # --- Get the command-line options ---
 
-my $dates  = undef;
-my $help   = undef;
-my $manual = undef;
+my $dates      = undef;
+my $help       = undef;
+my $manual     = undef;
+my $outputFile = undef;
 
 GetOptions(
     'dates|d=s'  => \$dates,
     'help|h'     => \$help,
     'manual|man' => \$manual,
+    'output|o=s' => \$outputFile,
 );
 
 # --- Actions for -help or -manual options if invoked ---
@@ -143,16 +146,21 @@ if($@) { die "Option --dates=$dates is invalid! $startDate is not a valid date. 
 eval   { $end   = CPC::Day->new($endDate);   };
 if($@) { die "Option --dates=$dates is invalid! $endDate is not a valid date. Please try again. Exiting";   }
 
-# --- Set up arguments for the GrADS script ---
+# --- Set default output filename if none supplied by user ---
+
+unless($outputFile) {
+    my $outputRoot = "$DATA_OUT/observations/ocean/short_range/global/oni-avhrr";
+    my $yyyy       = $end->Year;
+    my $mm         = sprintf("%02d",$end->Mnum);
+    my $outputDir  = "$outputRoot/$yyyy/$mm";
+    unless(-d $outputDir) { mkpath($outputDir) or die "Could not create directory $outputDir - $! - exiting"; }
+    $outputFile = "$outputDir/oni.bin";
+}
+
+# --- Identify the SST dataset to be used ---
 
 my $ctlFile    = "$DATA_OUT/observations/ocean/short_range/global/sst-avhrr/daily-data/ncei-avhrr-only-v2.ctl";
 my $var        = 'anom';
-my $outputRoot = "$DATA_OUT/observations/ocean/short_range/global/oni-avhrr";
-my $yyyy       = $end->Year;
-my $mm         = sprintf("%02d",$end->Mnum);
-my $outputDir  = "$outputRoot/$yyyy/$mm";
-unless(-d $outputDir) { mkpath($outputDir) or die "Could not create directory $outputDir - $! - exiting"; }
-my $outputFile = "$outputDir/oni.bin";
 
 # --- Calculate ONI using GrADS script ---
 
