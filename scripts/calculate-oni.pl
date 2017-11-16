@@ -149,7 +149,7 @@ if($@) { die "Option --dates=$dates is invalid! $endDate is not a valid date. Pl
 # --- Set default output filename if none supplied by user ---
 
 unless($outputFile) {
-    my $outputRoot = "$DATA_OUT/observations/ocean/short_range/global/oni-avhrr";
+    my $outputRoot = "$DATA_OUT/observations/ocean/long_range/global/oni-avhrr";
     my $yyyy       = $end->Year;
     my $mm         = sprintf("%02d",$end->Mnum);
     my $outputDir  = "$outputRoot/$yyyy/$mm";
