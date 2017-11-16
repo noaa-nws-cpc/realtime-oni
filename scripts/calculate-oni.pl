@@ -164,6 +164,7 @@ my $var        = 'anom';
 
 # --- Calculate ONI using GrADS script ---
 
+print "Calculating the ONI over the period $start to $end...\n";
 chdir("$APP_PATH/scripts") or die "Could not chdir to $APP_PATH/scripts! Reason: $@ - exiting";
 my $gradsErr = grads("run calculate-oni.gs $ctlFile $var $start $end $outputFile");
 
