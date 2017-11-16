@@ -4,13 +4,13 @@
 
 =head1 NAME
 
-update-oni-archive - Calculate and archive the Oceanic Nino Index from daily SST data
+calculate-oni - Calculate the Oceanic Nino Index from daily SST data and write it to a binary file
 
 =head1 SYNOPSIS
 
- $REALTIME_ONI/scripts/update-oni-archive.pl [-d]
- $REALTIME_ONI/scripts/update-oni-archive.pl -h
- $REALTIME_ONI/scripts/update-oni-archive.pl -man
+ $REALTIME_ONI/scripts/calculate-oni.pl [-d]
+ $REALTIME_ONI/scripts/calculate-oni.pl -h
+ $REALTIME_ONI/scripts/calculate-oni.pl -man
 
  [OPTION]            [DESCRIPTION]                                    [VALUES]
 
