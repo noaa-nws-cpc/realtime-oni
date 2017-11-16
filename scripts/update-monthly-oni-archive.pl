@@ -106,7 +106,7 @@ my $help       = undef;
 my $manual     = undef;
 
 GetOptions(
-    'date|d=i'   => \$dates,
+    'date|d=i'   => \$date,
     'help|h'     => \$help,
     'manual|man' => \$manual,
 );
@@ -139,9 +139,51 @@ my $endMonth;
 eval   { $endMonth = CPC::Month->new($date); };
 if($@) { die "Option --date=$date is invalid! Please try again. Exiting"; }
 my $startMonth = $endMonth - 2;
+my $midMonth   = $endMonth - 1;
 my $start      = CPC::Day->new(100*int($startMonth)+1);
 my $end        = $endMonth->Length;
+my $startInt   = int($start);
+my $endInt     = int($end);
 
+# --- Prepare archive ---
+
+my $outputRoot = "$DATA_OUT/observations/ocean/long_range/global/oni-avhrr";
+my $yyyy       = $midMonth->Year;
+unless(-d "$outputRoot/$yyyy") { mkpath("$outputRoot/$yyyy") or die "Could not create directory $outputRoot/$yyyy - $! - exiting"; }
+my $season     = substr($startMonth->Name,0,1).substr($midMonth->Name,0,1).substr($endMonth->Name,0,1);
+my $outputFile = "$outputRoot/$yyyy/$season.txt";
+
+# --- Execute script to create ONI data ---
+
+print "Archiving ONI data for $season $yyyy...\n";
+if(-s "$APP_PATH/work/update-monthly-oni-archive.bin") { unlink("$APP_PATH/work/update-monthly-oni-archive.bin"); }
+my $badreturn = system("perl $APP_PATH/scripts/calculate-oni.pl -d $startInt-$endInt -o $APP_PATH/work/update-monthly-oni-archive.bin");
+
+if($badreturn) {
+    warn "   ERROR: ONI calculation failed - see logfile\n";
+    $error = 1;
+}
+else {
+
+    # --- Create archive file ---
+
+    open(BININ,'<',"$APP_PATH/work/update-monthly-oni-archive.bin") or die "\nERROR: Could not open $APP_PATH/work/update-monthly-oni-archive.bin for reading - $! - exiting";
+    binmode(BININ);
+    my $resultStr = join('',<BININ>);
+    close(BININ);
+    my @result    = unpack('f*',$resultStr);
+    my $oniVal    = $result[0];
+    my $sstVal    = $result[1];
+
+    open(ARCHIVE,'>',$outputFile) or die "Could not open $outputFile for writing - $! - exiting";
+    print ARCHIVE "$season $yyyy $oniVal $sstVal\n";
+    close(ARCHIVE);
+    print "   $outputFile written!\n";
+}
+
+# --- Cleanup and end script ---
+
+if($error)  { die "\nErrors or Warnings detected - please check the log file for more information\n"; }
 
 exit 0;
 
