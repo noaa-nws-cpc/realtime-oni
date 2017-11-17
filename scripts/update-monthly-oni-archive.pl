@@ -172,8 +172,8 @@ else {
     my $resultStr = join('',<BININ>);
     close(BININ);
     my @result    = unpack('f*',$resultStr);
-    my $oniVal    = sprintf("%9s",sprintf("%.4f",$result[0]));
-    my $sstVal    = sprintf("%9s",sprintf("%.4f",$result[1]));
+    my $oniVal    = sprintf("%8s",sprintf("%.3f",$result[0]));
+    my $sstVal    = sprintf("%8s",sprintf("%.3f",$result[1]));
 
     open(ARCHIVE,'>',$outputFile) or die "Could not open $outputFile for writing - $! - exiting";
     print ARCHIVE "$season $yyyy $sstVal $oniVal\n";
