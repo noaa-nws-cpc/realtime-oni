@@ -141,7 +141,7 @@ if($@) { die "Option --date=$date is invalid! Please try again. Exiting"; }
 my $startMonth = $endMonth - 2;
 my $midMonth   = $endMonth - 1;
 my $start      = CPC::Day->new(100*int($startMonth)+1);
-my $end        = $endMonth->Length;
+my $end        = CPC::Day->new(100*int($endMonth)+$endMonth->Length);
 my $startInt   = int($start);
 my $endInt     = int($end);
 
@@ -176,7 +176,7 @@ else {
     my $sstVal    = sprintf("%9s",sprintf("%.4f",$result[1]));
 
     open(ARCHIVE,'>',$outputFile) or die "Could not open $outputFile for writing - $! - exiting";
-    print ARCHIVE "$season $yyyy $oniVal $sstVal\n";
+    print ARCHIVE "$season $yyyy $sstVal $oniVal\n";
     close(ARCHIVE);
     print "   $outputFile written!\n";
 }
