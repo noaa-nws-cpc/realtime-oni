@@ -193,9 +193,9 @@ DAY: foreach my $day (@daylist) {
     my $yyyy       = $day->Year;
     my $yyyymmdd   = int($day);
     my $sourceFile = "ftp://eclipse.ncdc.noaa.gov/pub/OI-daily-v2/NetCDF/$yyyy/AVHRR/avhrr-only-v2.$yyyymmdd.nc.gz";
-    my $outputDir  = join('/',$outputRoot,date_dirs($day));
+    my $outputDir  = join('/',$outputRoot,$yyyy);
     unless(-d $outputDir) { mkpath($outputDir) or die "\nCould not create directory $outputDir - check app permissions on your system - exiting"; }
-    my $destFile   = "$outputDir/ncei-avhrr-only-v2.nc.gz";
+    my $destFile   = "$outputDir/ncei-avhrr-only-v2-$yyyymmdd.nc.gz";
     if(-s $destFile) { unlink($destFile); }
     my $badresult  = system("wget $sourceFile -O $destFile >& /dev/null");
     my $sysmsg     = $?;
@@ -210,7 +210,7 @@ DAY: foreach my $day (@daylist) {
         $sysmsg     = $?;
 
         if($badresult) {
-            warn "   ERROR: Unable to download preliminary AVHRR SST file too - $sysmsg - will not update archive for $day - $sysmsg";
+            warn "   ERROR: Unable to download preliminary AVHRR SST file too - $sysmsg - will not update archive for $day - logged";
             $error = 1;
             if($failed) { print FAILED "$yyyymmdd\n"; }
             next DAY;
@@ -238,7 +238,7 @@ DAY: foreach my $day (@daylist) {
 
     # --- Check that the unzipped file exists in the archive ---
 
-    my $archiveFile = "$outputDir/ncei-avhrr-only-v2.nc";
+    my $archiveFile = "$outputDir/ncei-avhrr-only-v2-$yyyymmdd.nc";
 
     unless(-s $archiveFile) {
         warn "   ERROR: Archive file not found - check for uncaught errors - logged";
@@ -254,14 +254,6 @@ DAY: foreach my $day (@daylist) {
 
 if($failed) { close(FAILED); }
 if($error)  { die "\nErrors or Warnings detected - please check the log file for more information\n"; }
-
-sub date_dirs {
-    my $day  = shift;
-    my $yyyy = $day->Year();
-    my $mm   = sprintf("%02d",$day->Mnum());
-    my $dd   = sprintf("%02d",$day->Mday());
-    return join('/',$yyyy,$mm,$dd);
-}
 
 exit 0;
 
