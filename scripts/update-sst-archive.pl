@@ -218,7 +218,7 @@ DAY: foreach my $day (@daylist) {
         else {
             warn "   Downloaded a preliminary AVHRR SST file for $day - archive will need update once final data are available\n";
             if($failed) { print FAILED "$yyyymmdd\n"; }
-            $error = 1;
+            #$error = 1;
         }
 
     }
@@ -253,7 +253,7 @@ DAY: foreach my $day (@daylist) {
 # --- Cleanup and end script ---
 
 if($failed) { close(FAILED); }
-if($error)  { die "\nErrors or Warnings detected - please check the log file for more information\n"; }
+if($error)  { die "\nErrors detected - please check the log file for more information\n"; }
 
 exit 0;
 
