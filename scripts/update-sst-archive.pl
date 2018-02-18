@@ -84,18 +84,18 @@ my($scriptName,$scriptPath,$scriptSuffix);
 BEGIN { ($scriptName,$scriptPath,$scriptSuffix) = fileparse($0, qr/\.[^.]*/); }
 
 my $APP_PATH;
-my($DATA_IN,$DATA_OUT);
+my($NCO_COM_DATA,$DATA_OUT);
 
 BEGIN {
     die "REALTIME_ONI must be set to a valid directory - exiting" unless(CheckENV('REALTIME_ONI'));
-    $APP_PATH   = $ENV{REALTIME_ONI};
-    $APP_PATH   = RemoveSlash($APP_PATH);
-    die "DATA_IN must be set to a valid directory - exiting" unless(CheckENV('DATA_IN'));
-    $DATA_IN    = $ENV{DATA_IN};
-    $DATA_IN    = RemoveSlash($DATA_IN);
+    $APP_PATH     = $ENV{REALTIME_ONI};
+    $APP_PATH     = RemoveSlash($APP_PATH);
+    die "NCO_COM_DATA must be set to a valid directory - exiting" unless(CheckENV('NCO_COM_DATA'));
+    $NCO_COM_DATA = $ENV{NCO_COM_DATA};
+    $NCO_COM_DATA = RemoveSlash($NCO_COM_DATA);
     die "DATA_OUT must be set to a valid directory - exiting" unless(CheckENV('DATA_OUT'));
-    $DATA_OUT   = $ENV{DATA_OUT};
-    $DATA_OUT   = RemoveSlash($DATA_OUT);
+    $DATA_OUT     = $ENV{DATA_OUT};
+    $DATA_OUT     = RemoveSlash($DATA_OUT);
 }
 
 my $error = 0;
