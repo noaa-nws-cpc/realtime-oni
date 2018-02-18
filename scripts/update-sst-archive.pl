@@ -192,7 +192,7 @@ DAY: foreach my $day (@daylist) {
 
     my $yyyy       = $day->Year;
     my $yyyymmdd   = int($day);
-    my $sourceFile = "ftp://eclipse.ncdc.noaa.gov/pub/OI-daily-v2/NetCDF/$yyyy/AVHRR/avhrr-only-v2.$yyyymmdd.nc.gz";
+    my $sourceFile = "$NCO_COM_DATA/observations/satellite/netcdf/avhrr/avhrr-only-v2.$yyyymmdd.nc.gz";
     my $outputDir  = join('/',$outputRoot,$yyyy);
     unless(-d $outputDir) { mkpath($outputDir) or die "\nCould not create directory $outputDir - check app permissions on your system - exiting"; }
     my $destFile   = "$outputDir/ncei-avhrr-only-v2-$yyyymmdd.nc.gz";
@@ -205,7 +205,7 @@ DAY: foreach my $day (@daylist) {
 
         # --- Attempt to download a preliminary file ---
 
-        $sourceFile = "ftp://eclipse.ncdc.noaa.gov/pub/OI-daily-v2/NetCDF/$yyyy/AVHRR/avhrr-only-v2.$yyyymmdd\_preliminary.nc.gz";
+        $sourceFile = "$NCO_COM_DATA/observations/satellite/netcdf/avhrr/avhrr-only-v2.$yyyymmdd\_preliminary.nc.gz";
         $badresult  = system("wget $sourceFile -O $destFile >& /dev/null");
         $sysmsg     = $?;
 
