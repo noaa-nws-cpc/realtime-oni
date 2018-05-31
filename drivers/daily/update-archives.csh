@@ -8,7 +8,6 @@
 # Date created:      2017-11-17
 ##########################################################################################
 #
-source ~/.cshrc
 
 # --- Get the latest date for which SST data are expected to be available ---
 
