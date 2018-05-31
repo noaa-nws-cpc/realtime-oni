@@ -192,25 +192,21 @@ DAY: foreach my $day (@daylist) {
 
     my $yyyy       = $day->Year;
     my $yyyymmdd   = int($day);
-    my $sourceFile = "$NCO_COM_DATA/observations/satellite/netcdf/avhrr/avhrr-only-v2.$yyyymmdd.nc.gz";
+    my $sourceFile = "$NCO_COM_DATA/observations/satellite/netcdf/avhrr/avhrr-only-v2.$yyyymmdd.nc";
     my $outputDir  = join('/',$outputRoot,$yyyy);
     unless(-d $outputDir) { mkpath($outputDir) or die "\nCould not create directory $outputDir - check app permissions on your system - exiting"; }
     my $destFile   = "$outputDir/ncei-avhrr-only-v2-$yyyymmdd.nc.gz";
     if(-s $destFile) { unlink($destFile); }
-    my $badresult  = system("wget $sourceFile -O $destFile >& /dev/null");
-    my $sysmsg     = $?;
 
-    if($badresult) {
-        warn "   WARNING: Unable to download final AVHRR SST file - $sysmsg - looking for a preliminary version";
+    unless(copy($sourceFile,$destFile)) {
+        warn "   WARNING: Unable to download final AVHRR SST file - looking for a preliminary version";
 
         # --- Attempt to download a preliminary file ---
 
-        $sourceFile = "$NCO_COM_DATA/observations/satellite/netcdf/avhrr/avhrr-only-v2.$yyyymmdd\_preliminary.nc.gz";
-        $badresult  = system("wget $sourceFile -O $destFile >& /dev/null");
-        $sysmsg     = $?;
+        $sourceFile = "$NCO_COM_DATA/observations/satellite/netcdf/avhrr/avhrr-only-v2.$yyyymmdd\_preliminary.nc";
 
-        if($badresult) {
-            warn "   ERROR: Unable to download preliminary AVHRR SST file too - $sysmsg - will not update archive for $day - logged";
+        unless(copy($sourceFile,$destFile)) {
+            warn "   ERROR: Unable to download preliminary AVHRR SST file too - will not update archive for $day - logged";
             $error = 1;
             if($failed) { print FAILED "$yyyymmdd\n"; }
             next DAY;
@@ -218,29 +214,14 @@ DAY: foreach my $day (@daylist) {
         else {
             warn "   Downloaded a preliminary AVHRR SST file for $day - archive will need update once final data are available\n";
             if($failed) { print FAILED "$yyyymmdd\n"; }
-            #$error = 1;
         }
 
     }
     else { print "   Downloaded a final AVHRR SST file for $day\n"; }
 
-    # --- Unzip source file ---
+    # --- Check that the file actually exists in the archive ---
 
-    $badresult = system("gunzip -f $destFile");
-    $sysmsg    = $?;
-
-    if($badresult) {
-        warn "   ERROR: Could not unzip $destFile - $sysmsg";
-        $error = 1;
-        if($failed) { print FAILED "$yyyymmdd\n"; }
-        next DAY;
-    }
-
-    # --- Check that the unzipped file exists in the archive ---
-
-    my $archiveFile = "$outputDir/ncei-avhrr-only-v2-$yyyymmdd.nc";
-
-    unless(-s $archiveFile) {
+    unless(-s $destFile) {
         warn "   ERROR: Archive file not found - check for uncaught errors - logged";
         $error = 1;
         if($failed) { print FAILED "$yyyymmdd\n"; }
