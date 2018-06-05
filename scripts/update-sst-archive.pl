@@ -188,41 +188,76 @@ print "\nOutput root directory: $outputRoot\n\n";
 DAY: foreach my $day (@daylist) {
     print "Archiving AVHRR SST data for $day...\n";
 
-    # --- Download source file ---
+    # --- Create output directory if needed ---
 
     my $yyyy       = $day->Year;
+    my $mm         = sprintf("%02d",$day->Mnum);
     my $yyyymmdd   = int($day);
-    my $sourceFile = "$NCO_COM_DATA/observations/satellite/netcdf/avhrr/avhrr-only-v2.$yyyymmdd.nc";
     my $outputDir  = join('/',$outputRoot,$yyyy);
     unless(-d $outputDir) { mkpath($outputDir) or die "\nCould not create directory $outputDir - check app permissions on your system - exiting"; }
-    my $destFile   = "$outputDir/ncei-avhrr-only-v2-$yyyymmdd.nc.gz";
+
+    # --- Set output filename and delete existing copy if needed ---
+
+    my $destFile   = "$outputDir/ncei-avhrr-only-v2-$yyyymmdd.nc";
     if(-s $destFile) { unlink($destFile); }
 
-    unless(copy($sourceFile,$destFile)) {
-        warn "   WARNING: Unable to download final AVHRR SST file - looking for a preliminary version";
+    # --- Attempt to copy the source file ---
 
-        # --- Attempt to download a preliminary file ---
+    my $sourceFile = "$NCO_COM_DATA/observations/satellite/netcdf/avhrr/avhrr-only-v2.$yyyymmdd.nc";
+
+    unless(copy($sourceFile,$destFile)) {
+        warn "   WARNING: Unable to download final AVHRR SST file from operational mount - looking for a preliminary version\n";
+
+        # --- If attempt fails, try the preliminary version of the source file ---
 
         $sourceFile = "$NCO_COM_DATA/observations/satellite/netcdf/avhrr/avhrr-only-v2.$yyyymmdd\_preliminary.nc";
 
         unless(copy($sourceFile,$destFile)) {
-            warn "   ERROR: Unable to download preliminary AVHRR SST file too - will not update archive for $day - logged";
-            $error = 1;
-            if($failed) { print FAILED "$yyyymmdd\n"; }
-            next DAY;
+            warn "  WARNING: Unable to download preliminary AVHRR SST file - checking NCEI FTP archives for data\n";
+
+            # --- If nothing was found on the operational mount, attempt to download the source file from the NCEI archives ---
+
+            $sourceFile    = "https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/access/avhrr-only/$yyyy$mm/avhrr-only-v2.$yyyymmdd.nc";
+            my $wgetFailed = system("wget $sourceFile -O $destFile >& /dev/null");
+
+            if($wgetFailed) {
+                warn "  WARNING: Unable to download final AVHRR SST file from NCEI archives - looking for a preliminary version\n";
+
+                # --- If attempt fails, try the preliminary version of the source file ---
+
+                $sourceFile = "https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/access/avhrr-only/$yyyy$mm/avhrr-only-v2.$yyyymmdd\_preliminary.nc";
+                $wgetFailed = system("wget $sourceFile -O $destFile >& /dev/null");
+
+                if($wgetFailed) {
+
+                    # --- Give up time ---
+
+                    warn "   ERROR: Unable to download any AVHRR data for $day - error caught";
+                    $error = 1;
+                    if($failed) { print FAILED "$yyyymmdd\n"; }
+                    next DAY;
+                }
+                else {
+                    warn "   Downloaded a preliminary AVHRR SST file for $day from NCEI archives - archive will need to update once final data are available\n";
+                    if($failed) { print FAILED "$yyyymmdd\n"; }
+                }
+
+            }
+            else { print "  Downloaded a final AVHRR SST file for $day from NCEI archives\n"; }
+
         }
         else {
-            warn "   Downloaded a preliminary AVHRR SST file for $day - archive will need update once final data are available\n";
+            warn "   Downloaded a preliminary AVHRR SST file for $day - archive will need to update once final data are available\n";
             if($failed) { print FAILED "$yyyymmdd\n"; }
         }
 
     }
     else { print "   Downloaded a final AVHRR SST file for $day\n"; }
 
-    # --- Check that the file actually exists in the archive ---
+    # --- Check that the file actually exists in the output archive ---
 
     unless(-s $destFile) {
-        warn "   ERROR: Archive file not found - check for uncaught errors - logged";
+        warn "   ERROR: Archive file not found - check for uncaught errors - error caught";
         $error = 1;
         if($failed) { print FAILED "$yyyymmdd\n"; }
         next DAY;
