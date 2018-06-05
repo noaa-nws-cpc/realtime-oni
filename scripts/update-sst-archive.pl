@@ -213,7 +213,7 @@ DAY: foreach my $day (@daylist) {
         $sourceFile = "$NCO_COM_DATA/observations/satellite/netcdf/avhrr/avhrr-only-v2.$yyyymmdd\_preliminary.nc";
 
         unless(copy($sourceFile,$destFile)) {
-            warn "  WARNING: Unable to download preliminary AVHRR SST file - checking NCEI FTP archives for data\n";
+            warn "   WARNING: Unable to download preliminary AVHRR SST file - checking NCEI FTP archives for data\n";
 
             # --- If nothing was found on the operational mount, attempt to download the source file from the NCEI archives ---
 
@@ -221,7 +221,7 @@ DAY: foreach my $day (@daylist) {
             my $wgetFailed = system("wget $sourceFile -O $destFile >& /dev/null");
 
             if($wgetFailed) {
-                warn "  WARNING: Unable to download final AVHRR SST file from NCEI archives - looking for a preliminary version\n";
+                warn "   WARNING: Unable to download final AVHRR SST file from NCEI archives - looking for a preliminary version\n";
 
                 # --- If attempt fails, try the preliminary version of the source file ---
 
@@ -243,7 +243,7 @@ DAY: foreach my $day (@daylist) {
                 }
 
             }
-            else { print "  Downloaded a final AVHRR SST file for $day from NCEI archives\n"; }
+            else { print "   Downloaded a final AVHRR SST file for $day from NCEI archives\n"; }
 
         }
         else {
