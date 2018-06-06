@@ -21,7 +21,7 @@ Table of Contents
 Overview
 ---------------
 
-This application downloads and archives daily real-time AVHRR-only gridded SST data created by the National Centers for Environmental Prediction (NCEI) and calculates the Oceanic Niño Index (ONI). The ONI is defined as a running mean of SST anomalies in the Niño 3.4 region (5°N-5°S, 120°-170°W). The standard time window for computing the ONI is three calendar months; however, a daily updating running mean using the previous 90 days is also calculated.
+This application downloads and archives daily real-time AVHRR-only gridded SST data created by the National Centers for Environmental Prediction (NCEI) and calculates the Oceanic Niño Index (ONI). The ONI is defined as a running mean of SST anomalies in the Niño 3.4 region (5°N-5°S, 120°-170°W). The standard time window for computing the ONI is three calendar months, updated monthly (the monthly ONI); however, a daily updating running mean using the previous 90 days is also calculated (the daily ONI).
 
 This application is not intended to replace the ERSST.v5-based ONI published on the CPC Web Page ([here](http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php)). The planned usage is a rapidly updating (daily) index that serves as input into statistical prediction tools for subseasonal to seasonal time scales. 
 
@@ -67,7 +67,7 @@ Files are named `/{yyyy}/avhrr-only-v2.{yyyy}.{mm}.{dd}.nc`, and are simply copi
 
 **Script that creates these data:** `$REALTIME_ONI/scripts/update-sst-archive.pl`
 
-### Daily ONI Index
+### Daily ONI Archive
 
 **Location:** `$DATA_OUT/observations/ocean/long_range/global/oni-avhrr`
 
@@ -81,7 +81,7 @@ The `{SST}` value is the average sea surface temperature over the Niño 3.4 regi
 
 See [How to Run](docs/HOW-TO-RUN.md) for more information about this script.
 
-### Monthly ONI Index
+### Monthly ONI Archive
 
 **Location:** `$DATA_OUT/observations/ocean/long_range/global/oni-avhrr`
 
