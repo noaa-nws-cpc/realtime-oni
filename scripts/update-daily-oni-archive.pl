@@ -14,7 +14,7 @@ update-daily-oni-archive - Calculate the ONI over a 90-day period and store data
 
  [OPTION]            [DESCRIPTION]                                    [VALUES]
 
- -date, -d           The last day in the 90-day period                yyyymm
+ -date, -d           The last day in the 90-day period                yyyymmdd
  -help, -h           Print usage message and exit
  -manual, -man       Display script documentation
 
