@@ -59,6 +59,42 @@ Since realtime-oni is designed primarily to run within CPC operations, the archi
 Output Data
 ---------------
 
+### Local AVHRR-Only SST Data Archive
+
+**Location:** `$DATA_OUT/observations/ocean/short_range/global/sst-avhrr/daily-data`
+
+Files are named `/{yyyy}/avhrr-only-v2.{yyyy}.{mm}.{dd}.nc`, and are simply copies of the [input data](#input-data) arranged in a local archive with a GrADS [data descriptor file](http://cola.gmu.edu/grads/gadoc/SDFdescriptorfile.html) that allows [templating](http://cola.gmu.edu/grads/gadoc/templates.html) over the daily data. To set up the data descriptor file and archive on your system, see the [How to Install](docs/HOW-TO-INSTALL.md) documentation.
+
+**Script that creates these data:** `$REALTIME_ONI/scripts/update-sst-archive.pl`
+
+### Daily ONI Index
+
+**Location:** `$DATA_OUT/observations/ocean/long_range/global/oni-avhrr`
+
+These plain-text ascii files are named `{yyyy}/oni-90day-ending-{yyyy}{mm}{dd}.txt` and have the following structure:
+
+`90-days-ending-{yyyy}{mm}{dd}   {SST}   {ONI}`
+
+The `{SST}` value is the average sea surface temperature over the Niño 3.4 region during the 90-day period. The `{ONI}` value is the departure of `{SST}` from the climatological value.
+
+**Script that creates these data:** `$REALTIME_ONI/scripts/update-daily-oni-archive.pl`
+
+See [How to Run](docs/HOW-TO-RUN.md) for more information about this script.
+
+### Monthly ONI Index
+
+**Location:** `$DATA_OUT/observations/ocean/long_range/global/oni-avhrr`
+
+These plain-text ascii files are named `{yyyy}/oni-{MMM}.txt`, where `{yyyy}` is the year of the final month in the period, and `{MMM}` is a 3-character season identifier using the first letter of each month name in the 3-month season (e.g., JFM for January through March). The files have the following structure:
+
+`{MMM} {yyyy}   {SST}   {ONI}`
+
+The `{SST}` value is the average sea surface temperature over the Niño 3.4 region during the 90-day period. The `{ONI}` value is the departure of `{SST}` from the climatological value.
+
+**Script that creates these data:** `$REALTIME_ONI/scripts/update-monthly-oni-archive.pl`
+
+See [How to Run](docs/HOW-TO-RUN.md) for more information about this script.
+
 Process Flow
 ---------------
 
