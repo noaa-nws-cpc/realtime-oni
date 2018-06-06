@@ -24,7 +24,7 @@ endif
 
 # Validate the date!
 
-set date_test = `date --d ${upDate}`
+set date_test = `date --d ${endDate}`
 echo
 
 if ($?) then
