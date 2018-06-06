@@ -151,7 +151,7 @@ my $outputRoot = "$DATA_OUT/observations/ocean/long_range/global/oni-avhrr";
 my $yyyy       = $midMonth->Year;
 unless(-d "$outputRoot/$yyyy") { mkpath("$outputRoot/$yyyy") or die "Could not create directory $outputRoot/$yyyy - $! - exiting"; }
 my $season     = substr($startMonth->Name,0,1).substr($midMonth->Name,0,1).substr($endMonth->Name,0,1);
-my $outputFile = "$outputRoot/$yyyy/$season.txt";
+my $outputFile = "$outputRoot/$yyyy/oni-$season.txt";
 
 # --- Execute script to create ONI data ---
 
