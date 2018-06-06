@@ -21,9 +21,9 @@ Table of Contents
 Overview
 ---------------
 
-This application downloads and archives daily AVHRR-only gridded SST data created by the National Centers for Environmental Prediction (NCEI) and calculates both the daily Oceanic Nino Index (ONI) using the past 90-day SST anomalies and the monthly ONI using the past three calendar months daily anomalies.
+This application downloads and archives daily real-time AVHRR-only gridded SST data created by the National Centers for Environmental Prediction (NCEI) and calculates the Oceanic Niño Index (ONI). The ONI is defined as a running mean of SST anomalies in the Niño 3.4 region (5°N-5°S, 120°-170°W). The standard time window for computing the ONI is three calendar months; however, a daily updating running mean using the previous 90 days is also calculated.
 
-Since realtime-oni is intended for use in Climate Prediction Center (CPC) operations, the AVHRR-only SST data download is first attempted through NCEP Central Operations dataflow. If this fails, however, the application then attempts to download the data directly from the public NCEI servers, so realtime-oni can be installed and run outside of CPC as well.
+This application is not intended to replace the ERSST.v5-based ONI published on the CPC Web Page ([here](http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php)). The planned usage is a rapidly updating (daily) index that serves as input into statistical prediction tools for subseasonal to seasonal time scales. 
 
 Other Documents
 ---------------
@@ -43,6 +43,18 @@ Global Variables Used
 
 Input Data
 ---------------
+
+### AVHRR-Only SST Data
+
+**Location:** https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/access/avhrr-only
+
+Files are named `/{yyyy}{mm}/avhrr-only-v2.{yyyy}{mm}{dd}.nc`, where `{yyyy}` is the integer calendar year, `{mm}` is the 2-digit integer month number (01, 02, ..., 12), and `{dd}` is the 2-digit integer day of the month.
+
+For recent data (1-2 weeks old), a preliminary version may be all that is available. The naming convention for these files is `/{yyyy}{mm}/avhrr-only-v2.{yyyy}{mm}{dd}_preliminary.nc`. The software attempts to download a preliminary file if the final data are not available.
+
+Since realtime-oni is designed primarily to run within CPC operations, the archiving script first attempts to find these data on a mount provided by NCEP Central Operations (NCO) dataflow (`$NCO_COM_DATA/observations/satellite/netcdf/avhrr`). If the data are not there or the mount does not exist, the software will then attempt to obtain the data from the NCEI server above using wget. Because of this, realtime-oni can be installed and run outside of CPC if you wish, but an environment variable `NCO_COM_DATA` is expected to be defined. If you are attempting to use this application outside of CPC operations, this variable can be set to a dummy value.
+
+**Format:** [NetCDF](https://www.unidata.ucar.edu/software/netcdf/docs/netcdf_introduction.html) daily gridded data
 
 Output Data
 ---------------
