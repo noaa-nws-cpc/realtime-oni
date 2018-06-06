@@ -1,6 +1,6 @@
 ######################################################
 # File:                  Makefile                    #
-# Process Name:          REALTIME_ONI                #
+# App Name:              REALTIME_ONI                #
 # Functionality:         Installation and Setup      #
 # Author:                Adam Allgood                #
 # Date Makefile created: 2017-11-14                  #

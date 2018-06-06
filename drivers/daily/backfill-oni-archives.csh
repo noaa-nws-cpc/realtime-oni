@@ -2,7 +2,7 @@
 #
 #############################################################################################
 # File:              backfill-oni-archives.csh
-# Process Name:      Realtime-ONI
+# App Name:          Realtime-ONI
 # Functionality:     Run the driver script for a range of dates to backfill the ONI archives
 # Author:            Adam Allgood
 # Date created:      2017-11-17

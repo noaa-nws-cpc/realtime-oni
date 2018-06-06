@@ -2,7 +2,7 @@
 #
 ##########################################################################################
 # File:              update_archives.csh
-# Process Name:      Realtime-ONI
+# App Name:          Realtime-ONI
 # Functionality:     Driver script to update daily SST archive and realtime ONI archives
 # Author:            Adam Allgood
 # Date created:      2017-11-17
