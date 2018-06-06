@@ -12,9 +12,14 @@ Table of Contents
 - [Overview](#overview)
 - [Other Documents](#other-documents)
 - [NOAA Disclaimer](#noaa-disclaimer)
+- [Global Variables Used](#global-variables-used)
 
 Overview
 ---------------
+
+This application downloads and archives daily AVHRR-only gridded SST data created by the National Centers for Environmental Prediction (NCEI) and calculates both the daily Oceanic Nino Index (ONI) using the past 90-day SST anomalies and the monthly ONI using the past three calendar months daily anomalies.
+
+Since realtime-oni is intended for use in Climate Prediction Center (CPC) operations, the AVHRR-only SST data download is first attempted through NCEP Central Operations dataflow. If this fails, however, the application then attempts to download the data directly from the public NCEI servers, so realtime-oni can be installed and run outside of CPC as well.
 
 Other Documents
 ---------------
@@ -23,6 +28,15 @@ Other Documents
 - [How to Run](docs/HOW-TO-RUN.md)
 - [Contributing Guidelines](docs/CONTRIBUTING.md)
 - [Software License](LICENSE)
+
+Global Variables Used
+---------------
+
+- `$REALTIME_ONI` The app location
+- `NCO_COM_DATA` The operational NCO dataflow mount
+- `DATA_IN` Root path to expected location of input data (e.g., the SST archive)
+- `DATA_OUT` Root path to output location
+
 
 NOAA Disclaimer
 ===============
