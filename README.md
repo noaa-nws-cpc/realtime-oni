@@ -3,8 +3,8 @@
 README
 ===============
 
-> *Author: [Adam Allgood](mailto:adam.allgood@noaa.gov)*  
-> *Backup: [Daniel Harnos](mailto:daniel.harnos@noaa.gov)*
+> *App Owner: [Adam Allgood](mailto:adam.allgood@noaa.gov)*  
+> *CPC Operational Backup: [Daniel Harnos](mailto:daniel.harnos@noaa.gov)*
 
 Table of Contents
 -----------------
