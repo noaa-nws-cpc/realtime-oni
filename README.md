@@ -98,6 +98,8 @@ See [How to Run](docs/HOW-TO-RUN.md) for more information about this script.
 Process Flow
 ---------------
 
+![Flow diagram image](docs/realtime-oni-flowchart.png)
+
 NOAA Disclaimer
 ===============
 
