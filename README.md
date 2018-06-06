@@ -21,6 +21,8 @@ Other Documents
 
 - [How to Install](docs/HOW-TO-INSTALL.md)
 - [How to Run](docs/HOW-TO-RUN.md)
+- [Contributing Guidelines](docs/CONTRIBUTING.md)
+- [Software License](LICENSE)
 
 NOAA Disclaimer
 ===============
