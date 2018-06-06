@@ -3,8 +3,8 @@
 README
 ===============
 
-> *App Owner: [Adam Allgood](mailto:adam.allgood@noaa.gov)*  
-> *CPC Operational Backup: [Daniel Harnos](mailto:daniel.harnos@noaa.gov)*
+- *App Owner: [Adam Allgood](mailto:adam.allgood@noaa.gov)*  
+- *CPC Operational Backup: [Daniel Harnos](mailto:daniel.harnos@noaa.gov)*
 
 Table of Contents
 -----------------
@@ -13,6 +13,10 @@ Table of Contents
 - [Other Documents](#other-documents)
 - [NOAA Disclaimer](#noaa-disclaimer)
 - [Global Variables Used](#global-variables-used)
+- [Input Data](#input-data)
+- [Output Data](#output-data)
+- [Process Flow](#process-flow)
+- [NOAA Disclaimer](#noaa-disclaimer)
 
 Overview
 ---------------
@@ -37,6 +41,14 @@ Global Variables Used
 - `DATA_IN` Root path to expected location of input data (e.g., the SST archive)
 - `DATA_OUT` Root path to output location
 
+Input Data
+---------------
+
+Output Data
+---------------
+
+Process Flow
+---------------
 
 NOAA Disclaimer
 ===============
