@@ -14,7 +14,7 @@ update-sst-archive - Download, unzip, and archive NCEI-based SST data
 
  [OPTION]            [DESCRIPTION]                                    [VALUES]
 
- -date, -d           Date forecast data are available (default today) yyyymmdd
+ -date, -d           Date forecast data are available                 yyyymmdd
  -list, -l           File containing a list of dates to archive       filename
  -failed, -f         Write dates where archiving failed to file       filename
  -help, -h           Print usage message and exit
