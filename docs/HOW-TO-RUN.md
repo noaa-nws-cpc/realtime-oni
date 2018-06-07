@@ -105,6 +105,23 @@ Usage:
      -manual, -man       Display script documentation
 ```
 
-
 Calculating the ONI
 ---------------
+
+To calculate the ONI, both the daily and monthly updaters use a subscript called `$REALTIME_ONI/scripts/calculate-oni.pl`, which uses the [GrADS script](http://cola.gmu.edu/grads/gadoc/script.html) `$REALTIME_ONI/scripts/calculate-oni.gs` to actually compute the index. The GrADS script writes the Niño 3.4 basin average SST for the period and the departure from normal (ONI) to an unformatted binary file. The Perl script then read the binary data and writes them in ascii format.
+
+The usage statement for the Perl script is:
+```
+Usage:
+     $REALTIME_ONI/scripts/calculate-oni.pl [-d|-o]
+     $REALTIME_ONI/scripts/calculate-oni.pl -h
+     $REALTIME_ONI/scripts/calculate-oni.pl -man
+
+     [OPTION]            [DESCRIPTION]                                    [VALUES]
+
+     -dates, -d          Date range for computing the ONI, e.g., 3-months yyyymmdd-yyyymmdd
+     -help, -h           Print usage message and exit
+     -manual, -man       Display script documentation
+     -output, -o         Output filename (override default)               filename
+```
+Note that this script has an option to take a date range. This is how the same script can compute the ONI for a 90-day period as well as a 3-month period. If desired, this script could be run manually for any time range (if you wanted a 30-day, or 120-day ONI for example). Also, using the `-output` option, the ascii data file can be written anywhere you want.
