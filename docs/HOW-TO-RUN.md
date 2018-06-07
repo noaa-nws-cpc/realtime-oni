@@ -60,8 +60,51 @@ where YYYYMMDD is the starting date of the period you want to backfill.
 Updating the SST Archive
 ---------------
 
+The AVHRR-only daily SST archive used as input to compute the ONI is updated and maintained by the driver script (see [Operational Usage](#operational-usage)). The updater script that the driver script calls can be run independently as well, if desired for some reason. This is the script usage:
+```
+ $REALTIME_ONI/scripts/update-sst-archive.pl [-l|-d]
+ $REALTIME_ONI/scripts/update-sst-archive.pl -h
+ $REALTIME_ONI/scripts/update-sst-archive.pl -man
+
+ [OPTION]            [DESCRIPTION]                                    [VALUES]
+
+ -date, -d           Date forecast data are available                 yyyymmdd
+ -list, -l           File containing a list of dates to archive       filename
+ -failed, -f         Write dates where archiving failed to file       filename
+ -help, -h           Print usage message and exit
+ -manual, -man       Display script documentation
+```
+Given no arguments, the script will do nothing and exit. The script can take a single date argument via the `-date` option, and will attempt to download and archive the daily SST file for that date. Additionally, a filename containing a list of dates to archive can be supplied via the `-list` option. The script keeps track of dates where no data or only preliminary data were available, and these can be written out to a list file via the `-failed` option. By setting `-list` and `failed` to the same file, a running list of what needs to be updated after each run of the script can be maintained. This is how the script is used in the operational driver.
+
 Updating the Daily and Monthly ONI
 ---------------
+
+The daily (90-day) and monthly (3-calendar month) ONI values are calculated and archived by the driver script (see [Operational Usage](#operational-usage)). The updater scripts that the driver script calls can be run independently as well, if desired for some reason. The usage statements for each script are:
+```
+Usage:
+     $REALTIME_ONI/scripts/update-daily-oni-archive.pl [-d]
+     $REALTIME_ONI/scripts/update-daily-oni-archive.pl -h
+     $REALTIME_ONI/scripts/update-daily-oni-archive.pl -man
+
+     [OPTION]            [DESCRIPTION]                                    [VALUES]
+
+     -date, -d           The last day in the 90-day period                yyyymmdd
+     -help, -h           Print usage message and exit
+     -manual, -man       Display script documentation
+```
+```
+Usage:
+     $REALTIME_ONI/scripts/update-monthly-oni-archive.pl [-d]
+     $REALTIME_ONI/scripts/update-monthly-oni-archive.pl -h
+     $REALTIME_ONI/scripts/update-monthly-oni-archive.pl -man
+
+     [OPTION]            [DESCRIPTION]                                    [VALUES]
+
+     -date, -d           The last month in the season                     yyyymm
+     -help, -h           Print usage message and exit
+     -manual, -man       Display script documentation
+```
+
 
 Calculating the ONI
 ---------------
