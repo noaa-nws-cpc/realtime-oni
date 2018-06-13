@@ -51,11 +51,11 @@ To rerun for a single day, use a date argument with the driver script as describ
 
 will update the SST and ONI archives for every day between January 1, 2018 and June 1, 2018.
 
-**NOTE:** At least 90 days/3 complete months worth of SST data prior to the start date of the backfilling period is required to compute the ONI for the start date. If your backfilling period is for dates subsequent to the date realtime-oni was initially installed on your system, then there should be no issues, because setting up an initial 120-day SST archive is part of the installation process. If you want to backfill for dates prior to the installation date, then you must first backfill the SST archive. To do this, execute the following script:
+**NOTE:** At least 90 days/3 complete months worth of SST data prior to the start date of the backfilling period is required to compute the ONI for the start date. If your backfilling period is for dates subsequent to the date realtime-oni was initially installed on your system, and there has been no downtime on cron, then there should be no issues, because setting up an initial 120-day SST archive is part of the installation process. If you want to backfill for dates prior to the installation date or the cron was down for more than 4 weeks (the SST archiver checks the past 4 weeks in the archive for missing data), then you must first backfill the SST archive. To do this, execute the following script:
 
 `$REALTIME_ONI/scripts/initialize-sst-archive.csh YYYYMMDD`
 
-where YYYYMMDD is the starting date of the period you want to backfill.
+where YYYYMMDD is the ending date of the 120 day period you want to backfill (e.g., the first day for which you want to rerun the ONI calculations).
 
 Updating the SST Archive
 ---------------
