@@ -155,7 +155,7 @@ my $outputFile = "$outputRoot/$yyyy/oni-$season.txt";
 
 # --- Execute script to create ONI data ---
 
-print "Archiving ONI data for $season $yyyy...\n";
+print "\n";
 if(-s "$APP_PATH/work/update-monthly-oni-archive.bin") { unlink("$APP_PATH/work/update-monthly-oni-archive.bin"); }
 my $badreturn = system("perl $APP_PATH/scripts/calculate-oni.pl -d $startInt-$endInt -o $APP_PATH/work/update-monthly-oni-archive.bin");
 

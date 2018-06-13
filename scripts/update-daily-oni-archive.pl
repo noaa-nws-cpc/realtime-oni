@@ -150,7 +150,7 @@ my $outputFile = "$outputRoot/$yyyy/oni-90day-ending-$endInt.txt";
 
 # --- Execute script to create ONI data ---
 
-print "Archiving ONI data for 90 days ending on $end...\n";
+print "\n";
 if(-s "$APP_PATH/work/update-daily-oni-archive.bin") { unlink("$APP_PATH/work/update-daily-oni-archive.bin"); }
 my $badreturn = system("perl $APP_PATH/scripts/calculate-oni.pl -d $startInt-$endInt -o $APP_PATH/work/update-daily-oni-archive.bin");
 
