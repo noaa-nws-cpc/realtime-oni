@@ -69,6 +69,7 @@ use File::Basename qw(fileparse basename);
 use File::Copy qw(copy move);
 use File::Path qw(mkpath);
 use Scalar::Util qw(blessed looks_like_number openhandle);
+use List::MoreUtils qw(uniq);
 use Pod::Usage;
 
 # --- CPC Perl5 Library packages ---
@@ -138,8 +139,14 @@ if($manual) {
 
 }
 
+# --- Set output root path ---
+
+my $outputRoot = "$DATA_OUT/observations/ocean/short_range/global/sst-avhrr/daily-data";
+print "\nOutput root directory: $outputRoot\n";
+
 # --- Create list of dates to archive ---
 
+print "Creating list of dates to update...\n";
 my @daylist;
 
 # Add date from -date option if supplied!
@@ -149,6 +156,22 @@ if($date) {
     eval   { $day = CPC::Day->new($date); };
     if($@) { die "Option --date=$date is invalid! Reason: $@ - exiting"; }
     else   { push(@daylist,$day); }
+    print "   Added $day to the update list\n";
+
+    # --- Scan the output archive for the 30 days prior and add days with missing data to the list ---
+
+    for(my $scanDay=$day-30; $scanDay<$day; $scanDay++) {
+        my $yyyy     = $scanDay->Year();
+        my $yyyymmdd = int($scanDay);
+        my $scanFile = "$outputRoot/$yyyy/ncei-avhrr-only-v2-$yyyymmdd.nc";
+
+        unless(-s $scanFile) {
+            print "   Added $scanDay to update list - data not found in the archive\n";
+            push(@daylist,$scanDay);
+        }
+
+    }
+
 }
 
 # Add dates from file if -list option supplied!
@@ -162,26 +185,27 @@ if($datelist) {
         foreach my $row (@datelist) {
             my $day;
             eval   { $day = CPC::Day->new($row); };
-            if($@) { die "In $datelist, $row is an invalid date! Reason: $@ - exiting"; }
+            if($@) { die "   In $datelist, $row is an invalid date! Reason: $@ - exiting"; }
             else   { push(@daylist,$day); }
         }
 
+        print "   Added dates from $datelist to update list\n";
     }
     else {
-        warn "Could not open $datelist for reading - $! - no new dates added";
+        warn "   Could not open $datelist for reading - $! - no new dates added";
         $error = 1;
     }
 
 }
 
+# --- Cull duplicate dates from dates list and sort into ascending order ---
+
+@daylist = uniq(@daylist);
+@daylist = sort {$a <=> $b} @daylist;
+
 # --- Open failed dates file if -failed option supplied ---
 
 if($failed) { open(FAILED,'>',$failed) or die "Could not open $failed for writing - $! - exiting"; }
-
-# --- Set output root path ---
-
-my $outputRoot = "$DATA_OUT/observations/ocean/short_range/global/sst-avhrr/daily-data";
-print "\nOutput root directory: $outputRoot\n\n";
 
 # --- Update the archive ---
 
