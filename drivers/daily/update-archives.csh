@@ -42,6 +42,8 @@ set failure = 0
 # --- Update the daily SST archive (default date only) ---
 
 if ($default == 1) then
+    echo
+    echo Updating the daily SST archive
     perl ${REALTIME_ONI}/scripts/update-sst-archive.pl -d ${upDate} -l ${REALTIME_ONI}/work/update-sst-archive.dates -f ${REALTIME_ONI}/work/update-sst-archive.dates
 
     if ( $status != 0) then
@@ -51,6 +53,8 @@ endif
 
 # --- Update the daily (90-day window) ONI ---
 
+echo
+echo Calculating the daily ONI using a 90-day window
 perl ${REALTIME_ONI}/scripts/update-daily-oni-archive.pl -d ${upDate}
 
 if ( $status != 0) then
@@ -60,6 +64,8 @@ endif
 # --- Update the monthly (3-month window) ONI ---
 
 set lastMonth = `date +%Y%m --d "${upDate} - 1 month"`
+echo
+echo Calculating the monthly ONI using a 3-month window
 perl ${REALTIME_ONI}/scripts/update-monthly-oni-archive.pl -d ${lastMonth}
 
 if ( $status != 0) then
