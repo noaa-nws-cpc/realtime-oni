@@ -6,6 +6,8 @@
 # Date Makefile created: 2017-11-14                  #
 ######################################################
 
+ARCH_STRT := $(shell echo `date +%d%b%Y --d "120 days ago"`)
+
 # --- Rules ---
 
 .PHONY: permissions
@@ -15,7 +17,7 @@
 
 # --- make install ---
 
-install: permissions dirs copyctl setupsst
+install: permissions dirs makectl setupsst
 
 # --- permissions ---
 
@@ -30,11 +32,13 @@ dirs:
 	mkdir -p ./logs
 	mkdir -p ./work
 
-# --- copyctl ---
+# --- makectl ---
 
-copyctl:
+makectl:
 	mkdir -p ${DATA_OUT}/observations/ocean/short_range/global/sst-avhrr/daily-data
-	cp ./ctl/*.ctl ${DATA_OUT}/observations/ocean/short_range/global/sst-avhrr/daily-data
+	echo 'dset ^%y4/ncei-avhrr-only-v2-%y4%m2%d2.nc' > ${DATA_OUT}/observations/ocean/short_range/global/sst-avhrr/daily-data/ncei-avhrr-only-v2.ctl
+	echo 'options template' >> ${DATA_OUT}/observations/ocean/short_range/global/sst-avhrr/daily-data/ncei-avhrr-only-v2.ctl
+	echo tdef time 20000 linear $(ARCH_STRT) 1dy >> ${DATA_OUT}/observations/ocean/short_range/global/sst-avhrr/daily-data/ncei-avhrr-only-v2.ctl
 
 # --- setupsst ---
 
