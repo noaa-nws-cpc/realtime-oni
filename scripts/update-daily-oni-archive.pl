@@ -17,6 +17,7 @@ update-daily-oni-archive - Calculate the ONI over a 90-day period and store data
  -date, -d           The last day in the 90-day period                yyyymmdd
  -help, -h           Print usage message and exit
  -manual, -man       Display script documentation
+ -windows, -w        Averaging windows to calculate                   comma-delimited positive integers
 
 =head1 DESCRIPTION
 
@@ -26,11 +27,11 @@ Given a date, this script:
 
 =over 3
 
-=item * Defines a 90-day period ending on the date supplied
+=item * Defines a list of averaging windows ending on the date supplied
 
-=item * Runs calculate-oni.pl to compute the ONI over the period
+=item * Runs calculate-oni.pl to compute the ONI over each period
 
-=item * Writes the resulting value to a text file in an archive
+=item * Writes the resulting values to text files in an archive
 
 =back
 
@@ -54,7 +55,7 @@ L<Adam Allgood|mailto:Adam.Allgood@noaa.gov>
 
 L<Climate Prediction Center - NOAA/NWS/NCEP|http://www.cpc.ncep.noaa.gov>
 
-This documentation was last updated on: 08NOV2017
+This documentation was last updated on: 20JUN2018
 
 =cut
 
