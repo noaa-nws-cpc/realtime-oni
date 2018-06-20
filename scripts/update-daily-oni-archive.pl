@@ -104,11 +104,13 @@ my $error = 0;
 my $date       = int(CPC::Day->new() - 1);
 my $help       = undef;
 my $manual     = undef;
+my @windows;
 
 GetOptions(
-    'date|d=i'   => \$date,
-    'help|h'     => \$help,
-    'manual|man' => \$manual,
+    'date|d=i'    => \$date,
+    'help|h'      => \$help,
+    'manual|man'  => \$manual,
+    'windows|w=s' => \@windows,
 );
 
 # --- Actions for -help or -manual options if invoked ---
@@ -133,48 +135,57 @@ if($manual) {
 
 }
 
+# --- Separate windows args into list ---
+
+@windows = split(/,/,join(',',@windows));
+
 # --- Define the start and end dates of the season ---
 
 my $end;
 eval   { $end = CPC::Day->new($date); };
 if($@) { die "Option --date=$date is invalid! Please try again. Exiting"; }
-my $start = $end - 89;
-my $startInt   = int($start);
-my $endInt     = int($end);
+my $endInt    = int($end);
+
+my %start;
+foreach my $window (@windows) { $start{$window} = $end - $window + 1; }
 
 # --- Prepare archive ---
 
 my $outputRoot = "$DATA_OUT/observations/ocean/long_range/global/oni-avhrr";
 my $yyyy       = $end->Year;
 unless(-d "$outputRoot/$yyyy") { mkpath("$outputRoot/$yyyy") or die "Could not create directory $outputRoot/$yyyy - $! - exiting"; }
-my $outputFile = "$outputRoot/$yyyy/oni-90day-ending-$endInt.txt";
 
-# --- Execute script to create ONI data ---
+# --- Loop through windows to produce data files ---
 
-print "\n";
-if(-s "$APP_PATH/work/update-daily-oni-archive.bin") { unlink("$APP_PATH/work/update-daily-oni-archive.bin"); }
-my $badreturn = system("perl $APP_PATH/scripts/calculate-oni.pl -d $startInt-$endInt -o $APP_PATH/work/update-daily-oni-archive.bin");
+foreach my $window (@windows) {
+    print "\n";
+    my $startInt    = int($start{$window});
+    my $outputFile  = "$outputRoot/$yyyy/oni-${window}day-ending-$endInt.txt";
+    if(-s "$APP_PATH/work/update-daily-oni-archive.bin") { unlink("$APP_PATH/work/update-daily-oni-archive.bin"); }
+    my $oniFailed = system("perl $APP_PATH/scripts/calculate-oni.pl -d $startInt-$endInt -o $APP_PATH/work/update-daily-oni-archive.bin");
 
-if($badreturn) {
-    warn "   ERROR: ONI calculation failed - see logfile\n";
-    $error = 1;
-}
-else {
+    if($oniFailed) {
+        warn "   ERROR: $window-day ONI calculation failed - see logfile\n";
+        $error = 1;
+    }
+    else {
 
-    # --- Create archive file ---
+        # --- Create archive file ---
 
-    open(BININ,'<',"$APP_PATH/work/update-daily-oni-archive.bin") or die "\nERROR: Could not open $APP_PATH/work/update-daily-oni-archive.bin for reading - $! - exiting";
-    binmode(BININ);
-    my $resultStr = join('',<BININ>);
-    close(BININ);
-    my @result    = unpack('f*',$resultStr);
-    my $oniVal    = sprintf("%8s",sprintf("%.3f",$result[0]));
-    my $sstVal    = sprintf("%8s",sprintf("%.3f",$result[1]));
+        open(BININ,'<',"$APP_PATH/work/update-daily-oni-archive.bin") or die "\nERROR: Could not open $APP_PATH/work/update-daily-oni-archive.bin for reading - $! - exiting";
+        binmode(BININ);
+        my $resultStr = join('',<BININ>);
+        close(BININ);
+        my @result    = unpack('f*',$resultStr);
+        my $oniVal    = sprintf("%8s",sprintf("%.3f",$result[0]));
+        my $sstVal    = sprintf("%8s",sprintf("%.3f",$result[1]));
 
-    open(ARCHIVE,'>',$outputFile) or die "Could not open $outputFile for writing - $! - exiting";
-    print ARCHIVE "90-days-ending-$endInt $sstVal $oniVal\n";
-    close(ARCHIVE);
-    print "   $outputFile written!\n";
+        open(ARCHIVE,'>',$outputFile) or die "Could not open $outputFile for writing - $! - exiting";
+        print ARCHIVE "90-days-ending-$endInt $sstVal $oniVal\n";
+        close(ARCHIVE);
+        print "   $outputFile written!\n";
+    }
+
 }
 
 # --- Cleanup and end script ---
