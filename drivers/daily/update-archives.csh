@@ -51,11 +51,11 @@ if ($default == 1) then
     endif
 endif
 
-# --- Update the daily (90-day window) ONI ---
+# --- Update the daily (1, 14, and 90-day window) ONI ---
 
 echo
-echo Calculating the daily ONI using a 90-day window
-perl ${REALTIME_ONI}/scripts/update-daily-oni-archive.pl -d ${upDate}
+echo Calculating the daily ONI using 1-, 14-, and 90-day averaging windows
+perl ${REALTIME_ONI}/scripts/update-daily-oni-archive.pl -d ${upDate} -w 1,14,90
 
 if ( $status != 0) then
     set failure = 1
