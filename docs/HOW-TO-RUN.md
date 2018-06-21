@@ -32,8 +32,8 @@ Operational Usage
 This script can be run with no arguments. When executed, the following things happen:
 
 1. Yesterday's date is set as the update date by default
-2. The script `$REATIME_ONI/scripts/update-sst-archive.pl` is executed to update the daily SST archive with data for the update date and any dates that had preliminary data or no data on previous runs using the list in `$REALTIME_ONI/work/update-sst-archive.dates`
-3. The script `$REATIME_ONI/scripts/update-daily-oni-archive.pl` is executed to calculate the ONI using the 90-day period ending on the update date and to update the daily ONI archive (the file `$DATA_OUT/observations/ocean/long_range/global/oni-avhrr/{yyyy}/oni-90day-ending-{yyyy}{mm}{dd}.txt` is created)
+2. The script `$REATIME_ONI/scripts/update-sst-archive.pl` is executed to update the daily SST archive with data for the update date and any dates that had preliminary data or no data on previous runs using the list in `$REALTIME_ONI/work/update-sst-archive.dates`. The 30 days prior to the update date are also scanned for missing data, and any missing dates are also added to the update list.
+3. The script `$REATIME_ONI/scripts/update-daily-oni-archive.pl` is executed to calculate the ONI using the 1-, 14-, and 90-day periods ending on the update date and to update the daily ONI archive (the files `$DATA_OUT/observations/ocean/long_range/global/oni-avhrr/{yyyy}/oni-{n}day-ending-{yyyy}{mm}{dd}.txt` are created)
 4. The script `$REATIME_ONI/scripts/update-monthly-oni-archive.pl` is executed to calculate the ONI using the most recent three completed months prior to the update date and to update the monthly ONI archive (the file `$DATA_OUT/observations/ocean/long_range/global/oni-avhrr/{yyyy}/oni-{MMM}.txt` is created)
 5. If anything failed, the driver script exits with a non-zero value
 
@@ -41,7 +41,7 @@ The driver script can take a date as an argument, and that date will be used as 
 
 `$REALTIME_ONI/drivers/daily/update-archives.csh 20180601`
 
-will update the SST archive for June 1, 2018, and calculate the daily ONI for the 90 days ending June 1, 2018, and the March-May 2018 monthly ONI value.
+will update the SST archive for June 1, 2018, and calculate the daily ONI for the 1-, 14-, and 90-days ending June 1, 2018, and the March-May 2018 monthly ONI value.
 
 ### Rerunning for past dates
 
@@ -55,7 +55,7 @@ will update the SST and ONI archives for every day between January 1, 2018 and J
 
 `$REALTIME_ONI/scripts/initialize-sst-archive.csh YYYYMMDD`
 
-where YYYYMMDD is the ending date of the 120 day period you want to backfill (e.g., the first day for which you want to rerun the ONI calculations).
+where YYYYMMDD is the ending date of the 120 day period you want to backfill (e.g., the first day for which you want to rerun the ONI calculations). If you do this to produce SST data prior to the installation date, you will also need to modify the start date in the TDEF specifier of the GrADS data descriptor file in the SST archive - `$DATA_OUT/observations/ocean/short_range/global/sst-avhrr/daily-data/ncei-avhrr-only-v2.ctl` to match the new start date of your updated archive.
 
 Updating the SST Archive
 ---------------
@@ -76,13 +76,13 @@ The AVHRR-only daily SST archive used as input to compute the ONI is updated and
 ```
 Given no arguments, the script will do nothing and exit. The script can take a single date argument via the `-date` option, and will attempt to download and archive the daily SST file for that date. Additionally, a filename containing a list of dates to archive can be supplied via the `-list` option. The script keeps track of dates where no data or only preliminary data were available, and these can be written out to a list file via the `-failed` option. By setting `-list` and `failed` to the same file, a running list of what needs to be updated after each run of the script can be maintained. This is how the script is used in the operational driver.
 
-Updating the Daily and Monthly ONI
+Updating the Daily and Monthly ONI Archives
 ---------------
 
-The daily (90-day) and monthly (3-calendar month) ONI values are calculated and archived by the driver script (see [Operational Usage](#operational-usage)). The updater scripts that the driver script calls can be run independently as well, if desired for some reason. The usage statements for each script are:
+The daily (1-, 14-, and 90-day) and monthly (3-calendar month) ONI values are calculated and archived by the driver script (see [Operational Usage](#operational-usage)). The updater scripts that the driver script calls can be run independently as well, if desired for some reason. The usage statements for each script are:
 ```
 Usage:
-     $REALTIME_ONI/scripts/update-daily-oni-archive.pl [-d]
+     $REALTIME_ONI/scripts/update-daily-oni-archive.pl [-d|w]
      $REALTIME_ONI/scripts/update-daily-oni-archive.pl -h
      $REALTIME_ONI/scripts/update-daily-oni-archive.pl -man
 
@@ -91,6 +91,7 @@ Usage:
      -date, -d           The last day in the 90-day period                yyyymmdd
      -help, -h           Print usage message and exit
      -manual, -man       Display script documentation
+     -windows, -w        Averaging windows to calculate                   comma-delimited positive integers
 ```
 ```
 Usage:
@@ -105,10 +106,12 @@ Usage:
      -manual, -man       Display script documentation
 ```
 
+For the daily updater, the `-w` option accepts multiple values or a comma-separated list so that indicies over multiple time windows can be produced. Therefore, providing either `-w 1,14,90` or `-w 1 -w 14 -w 90` will tell the script to compute the ONI using a 1-, 14-, and 90-day averaging window.
+
 Calculating the ONI
 ---------------
 
-To calculate the ONI, both the daily and monthly updaters use a subscript called `$REALTIME_ONI/scripts/calculate-oni.pl`, which uses the [GrADS script](http://cola.gmu.edu/grads/gadoc/script.html) `$REALTIME_ONI/scripts/calculate-oni.gs` to actually compute the index. The GrADS script writes the Niño 3.4 basin average SST for the period and the departure from normal (ONI) to an unformatted binary file. The Perl script then read the binary data and writes them in ascii format.
+To calculate the ONI, both the daily and monthly archive updaters use a script called `$REALTIME_ONI/scripts/calculate-oni.pl`, which uses the [GrADS script](http://cola.gmu.edu/grads/gadoc/script.html) `$REALTIME_ONI/scripts/calculate-oni.gs` to actually compute the index. The GrADS script writes the Niño 3.4 basin average SST for the requested period and the departure from normal (ONI) to an unformatted binary file. The Perl script then read the binary file and writes them back out in ascii format.
 
 The usage statement for the Perl script is:
 ```
@@ -124,4 +127,4 @@ Usage:
      -manual, -man       Display script documentation
      -output, -o         Output filename (override default)               filename
 ```
-Note that this script has an option to take a date range. This is how the same script can compute the ONI for a 90-day period as well as a 3-month period. If desired, this script could be run manually for any time range (if you wanted a 30-day, or 120-day ONI for example). Also, using the `-output` option, the ascii data file can be written anywhere you want.
+Note that this script has an option to take a date range. This is how the same script can compute the ONI for multiple time windows. If desired, this script could be run manually for any time range (e.g., if you wanted a 30-day or 120-day ONI). Also, using the `-output` option, the ascii data file can be written anywhere you want. The archive updaters set the `-o` option to the archive files described in the [README](../README.md).
