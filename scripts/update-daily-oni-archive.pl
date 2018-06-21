@@ -8,7 +8,7 @@ update-daily-oni-archive - Calculate the ONI over a 90-day period and store data
 
 =head1 SYNOPSIS
 
- $REALTIME_ONI/scripts/update-daily-oni-archive.pl [-d]
+ $REALTIME_ONI/scripts/update-daily-oni-archive.pl [-d|w]
  $REALTIME_ONI/scripts/update-daily-oni-archive.pl -h
  $REALTIME_ONI/scripts/update-daily-oni-archive.pl -man
 
