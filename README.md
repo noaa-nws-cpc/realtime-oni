@@ -21,9 +21,9 @@ Table of Contents
 Overview
 ---------------
 
-This application downloads and archives daily real-time AVHRR-only gridded SST data created by the National Centers for Environmental Prediction (NCEI) and calculates the Oceanic Niño Index (ONI). The ONI is defined as a running mean of SST anomalies in the Niño 3.4 region (5°N-5°S, 120°-170°W). The standard time window for computing the ONI is three calendar months, updated monthly (the monthly ONI); however, a daily updating running mean using the previous 90 days is also calculated (the daily ONI).
+This application downloads and archives daily real-time AVHRR-only gridded SST data created by the National Centers for Environmental Prediction (NCEI) and calculates the Oceanic Niño Index (ONI). The ONI is defined as a running mean of SST anomalies in the Niño 3.4 region (5°N-5°S, 120°-170°W). The standard time window for computing the ONI is three calendar months, updated monthly (the monthly ONI); however, this app also calculates daily updated running means using multiple time windows that end on the latest date that SST data are expected to be available.
 
-This application is not intended to replace the ERSST.v5-based ONI published on the CPC Web Page ([here](http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php)). The planned usage is a rapidly updating (daily) index that serves as input into statistical prediction tools for subseasonal to seasonal time scales. 
+This application is not intended to replace the ERSST.v5-based ONI published on the CPC Web Page ([here](http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php)). The planned usage is to provide rapidly updating (daily) indices that serve as input into statistical climate prediction tools for subseasonal to seasonal time scales. 
 
 Other Documents
 ---------------
@@ -63,7 +63,7 @@ Output Data
 
 **Location:** `$DATA_OUT/observations/ocean/short_range/global/sst-avhrr/daily-data`
 
-Files are named `/{yyyy}/avhrr-only-v2.{yyyy}.{mm}.{dd}.nc`, and are simply copies of the [input data](#input-data) arranged in a local archive with a GrADS [data descriptor file](http://cola.gmu.edu/grads/gadoc/SDFdescriptorfile.html) that allows [templating](http://cola.gmu.edu/grads/gadoc/templates.html) over the daily data. To set up the data descriptor file and archive on your system, see the [How to Install](docs/HOW-TO-INSTALL.md) documentation.
+Files are named `/{yyyy}/avhrr-only-v2.{yyyy}.{mm}.{dd}.nc`, and are simply copies of the [input data](#input-data) arranged in a local archive with a GrADS [data descriptor file](http://cola.gmu.edu/grads/gadoc/SDFdescriptorfile.html) that allows [templating](http://cola.gmu.edu/grads/gadoc/templates.html) over the daily data. To set up the data descriptor file and local archive on your system, see the [How to Install](docs/HOW-TO-INSTALL.md) documentation.
 
 **Script that creates these data:** `$REALTIME_ONI/scripts/update-sst-archive.pl`
 
@@ -71,11 +71,11 @@ Files are named `/{yyyy}/avhrr-only-v2.{yyyy}.{mm}.{dd}.nc`, and are simply copi
 
 **Location:** `$DATA_OUT/observations/ocean/long_range/global/oni-avhrr`
 
-These plain-text ascii files are named `{yyyy}/oni-90day-ending-{yyyy}{mm}{dd}.txt` and have the following structure:
+These plain-text ascii files are named `{yyyy}/oni-{n}day-ending-{yyyy}{mm}{dd}.txt` and have the following structure:
 
-`90-days-ending-{yyyy}{mm}{dd}   {SST}   {ONI}`
+`{n}-days-ending-{yyyy}{mm}{dd}   {SST}   {ONI}`
 
-The `{SST}` value is the average sea surface temperature over the Niño 3.4 region during the 90-day period. The `{ONI}` value is the departure of `{SST}` from the climatological value.
+The `{n}` value is the number of days in the averaging window - the driver script is set up to produce 1-, 14-, and 90-day indices. The `{SST}` value is the average sea surface temperature over the Niño 3.4 region during the window period. The `{ONI}` value is the departure of `{SST}` from the climatological value.
 
 **Script that creates these data:** `$REALTIME_ONI/scripts/update-daily-oni-archive.pl`
 
