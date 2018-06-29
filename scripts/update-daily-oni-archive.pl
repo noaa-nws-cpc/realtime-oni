@@ -181,7 +181,7 @@ foreach my $window (@windows) {
         my $sstVal    = sprintf("%8s",sprintf("%.3f",$result[1]));
 
         open(ARCHIVE,'>',$outputFile) or die "Could not open $outputFile for writing - $! - exiting";
-        print ARCHIVE "90-days-ending-$endInt $sstVal $oniVal\n";
+        print ARCHIVE "$window-days-ending-$endInt $sstVal $oniVal\n";
         close(ARCHIVE);
         print "   $outputFile written!\n";
     }
